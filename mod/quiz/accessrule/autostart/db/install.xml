@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="mod/quiz/accessrule/autostart/db" VERSION="2025112200" COMMENT="Table for auto-start quiz rule"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="quizaccess_autostart" COMMENT="Stores whether the auto-start rule is enabled per quiz">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true">
+          <COMMENT>Primary key</COMMENT>
+        </FIELD>
+        <FIELD NAME="quizid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false">
+          <COMMENT>Quiz this setting applies to</COMMENT>
+        </FIELD>
+        <FIELD NAME="enabled" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0">
+          <COMMENT>Whether auto-start is turned on</COMMENT>
+        </FIELD>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false">
+          <COMMENT>Creation timestamp</COMMENT>
+        </FIELD>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false">
+          <COMMENT>Last modification timestamp</COMMENT>
+        </FIELD>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="quizid" TYPE="unique" FIELDS="quizid"/>
+      </KEYS>
+    </TABLE>
+  </TABLES>
+</XMLDB>
+
+
