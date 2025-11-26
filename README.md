@@ -28,3 +28,7 @@ This plugin lets students enter specific quizzes immediately by toggling the “
 
 Copy the `autostart` directory straight into `mod/quiz/accessrule/` in your Moodle installation. This avoids zipping while you are actively developing and testing the plugin.
 
+## License
+
+This project is available under the MIT License. See `LICENSE` for details.
+

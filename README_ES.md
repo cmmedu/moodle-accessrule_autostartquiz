@@ -27,3 +27,7 @@ Este plugin facilita que los estudiantes accedan de inmediato a ciertos cuestion
 ## Alternativa para desarrollo
 
 También puedes copiar el directorio `autostart` directamente en la ruta `mod/quiz/accessrule/` dentro de la raíz de Moodle. Esta opción acelera el ciclo de pruebas y evita tener que comprimir el plugin en cada cambio.
+
+## Licencia
+
+Este proyecto se publica bajo la licencia MIT. Consulta el archivo `LICENSE` para más detalles.
