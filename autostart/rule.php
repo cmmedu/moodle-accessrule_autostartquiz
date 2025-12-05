@@ -61,6 +61,89 @@ class quizaccess_autostart extends access_rule_base {
     }
     
     /**
+     * Configurar la página durante el intento del quiz.
+     * Este método se llama cuando el estudiante está respondiendo las preguntas.
+     *
+     * @param moodle_page $page la página que se está configurando.
+     */
+    public function setup_attempt_page($page) {
+        $this->apply_hide_question_info_css($page);
+    }
+    
+    /**
+     * Configurar la página de revisión del quiz.
+     * Este método se llama cuando el estudiante revisa sus respuestas.
+     *
+     * @param moodle_page $page la página que se está configurando.
+     */
+    public function setup_review_page($page) {
+        $this->apply_hide_question_info_css($page);
+    }
+    
+    /**
+     * Aplica el CSS para ocultar .que .info a estudiantes si está configurado.
+     *
+     * @param moodle_page $page la página actual.
+     */
+    private function apply_hide_question_info_css($page) {
+        global $DB;
+        
+        $quiz = $this->quizobj->get_quiz();
+        $context = $this->quizobj->get_context();
+        
+        $autostart = $DB->get_record('quizaccess_autostart', ['quizid' => $quiz->id]);
+        
+        if (!empty($autostart) && !empty($autostart->hide_questionsinfotostudents)) {
+            // Verificar si el usuario es estudiante (no tiene capacidad de ver reportes)
+            $isstudent = !has_capability('mod/quiz:viewreports', $context);
+            
+            if ($isstudent) {
+                // Cargar el archivo CSS del plugin
+                $page->requires->css('/mod/quiz/accessrule/autostart/styles.css');
+                
+                // Añadir clase al body para activar el CSS
+                $page->add_body_class('quizaccess-autostart-hideinfo');
+                
+                // También usar JavaScript como respaldo para asegurar que se oculte
+                // en caso de que el CSS no se cargue a tiempo o haya elementos dinámicos
+                $jscode = '
+                    (function() {
+                        // Añadir clase al body por si no se añadió desde PHP
+                        document.body.classList.add("quizaccess-autostart-hideinfo");
+                        
+                        // Inyectar CSS inline como respaldo
+                        if (!document.getElementById("quizaccess-autostart-hide-info")) {
+                            var style = document.createElement("style");
+                            style.id = "quizaccess-autostart-hide-info";
+                            style.innerHTML = ".que .info { display: none !important; }";
+                            document.head.appendChild(style);
+                        }
+                        
+                        function hideQuestionInfo() {
+                            var infoElements = document.querySelectorAll(".que .info");
+                            for (var i = 0; i < infoElements.length; i++) {
+                                infoElements[i].style.display = "none";
+                            }
+                        }
+                        
+                        // Ejecutar inmediatamente
+                        hideQuestionInfo();
+                        
+                        // Observar cambios dinámicos en el DOM
+                        if (typeof MutationObserver !== "undefined") {
+                            var observer = new MutationObserver(hideQuestionInfo);
+                            if (document.body) {
+                                observer.observe(document.body, { childList: true, subtree: true });
+                            }
+                        }
+                    })();
+                ';
+                $page->requires->js_init_code($jscode, true);
+            }
+        }
+    }
+    
+    /**
      * Información adicional para mostrar en la página del quiz.
      * Usamos esto para inyectar JavaScript que auto-inicia el intento.
      */
@@ -81,47 +164,6 @@ class quizaccess_autostart extends access_rule_base {
                 $jsurl = new moodle_url('/mod/quiz/accessrule/autostart/autostart.js');
                 $PAGE->requires->js($jsurl);
                 $PAGE->requires->js_init_call('M.quizaccess_autostart.init', array(), true);
-            }
-            
-            // Aplicar CSS para ocultar .que .info si está habilitado y el usuario es estudiante
-            if (!empty($autostart->hide_questionsinfotostudents)) {
-                // Verificar si el usuario es estudiante (no tiene capacidad de ver reportes)
-                $isstudent = !has_capability('mod/quiz:viewreports', $context);
-                
-                // Log para debug
-                error_log("quizaccess_autostart: hide_questionsinfotostudents enabled = " . 
-                    ($autostart->hide_questionsinfotostudents ? 'yes' : 'no'));
-                error_log("quizaccess_autostart: is_student = " . ($isstudent ? 'yes' : 'no'));
-                error_log("quizaccess_autostart: has viewreports capability = " . 
-                    (has_capability('mod/quiz:viewreports', $context) ? 'yes' : 'no'));
-                
-                if ($isstudent) {
-                    error_log("quizaccess_autostart: Applying CSS to hide .que .info for student");
-                    // Usar JavaScript para aplicar el estilo de manera más confiable
-                    $output .= '<style>.que .info { display: none !important; }</style>';
-                    $output .= '<script>
-                        (function() {
-                            console.log("quizaccess_autostart: Attempting to hide question info");
-                            function hideQuestionInfo() {
-                                var infoElements = document.querySelectorAll(".que .info");
-                                console.log("quizaccess_autostart: Found " + infoElements.length + " .que .info elements");
-                                for (var i = 0; i < infoElements.length; i++) {
-                                    infoElements[i].style.display = "none";
-                                    console.log("quizaccess_autostart: Hidden element " + i);
-                                }
-                            }
-                            if (document.readyState === "loading") {
-                                document.addEventListener("DOMContentLoaded", hideQuestionInfo);
-                            } else {
-                                hideQuestionInfo();
-                                // También intentar después de un pequeño delay por si se carga dinámicamente
-                                setTimeout(hideQuestionInfo, 500);
-                            }
-                        })();
-                    </script>';
-                } else {
-                    error_log("quizaccess_autostart: User is not a student, not hiding question info");
-                }
             }
         }
         return $output;

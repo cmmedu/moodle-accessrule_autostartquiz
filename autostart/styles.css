@@ -1,0 +1,5 @@
+/* quizaccess_autostart - Hide question info for students */
+body.quizaccess-autostart-hideinfo .que .info {
+    display: none !important;
+}
+
