@@ -249,7 +249,7 @@ class quizaccess_autostart extends access_rule_base {
      * Usamos esto para inyectar JavaScript que auto-inicia el intento.
      */
     public function description() {
-        global $PAGE, $DB;
+        global $PAGE, $DB, $USER;
         
         $quiz = $this->quizobj->get_quiz();
         $context = $this->quizobj->get_context();
@@ -261,10 +261,20 @@ class quizaccess_autostart extends access_rule_base {
         
         if (!empty($autostart)) {
             if (!empty($autostart->enabled)) {
-                // Agregar JavaScript para auto-iniciar cuando el DOM esté listo
-                $jsurl = new moodle_url('/mod/quiz/accessrule/autostart/autostart.js');
-                $PAGE->requires->js($jsurl);
-                $PAGE->requires->js_init_call('M.quizaccess_autostart.init', array(), true);
+                // Verificar si el usuario tiene intentos enviados (finished) para este quiz
+                $hasfinishedattempts = $DB->record_exists('quiz_attempts', [
+                    'quiz' => $quiz->id,
+                    'userid' => $USER->id,
+                    'state' => 'finished'
+                ]);
+                
+                // Solo ejecutar autostart si no hay intentos enviados
+                if (!$hasfinishedattempts) {
+                    // Agregar JavaScript para auto-iniciar cuando el DOM esté listo
+                    $jsurl = new moodle_url('/mod/quiz/accessrule/autostart/autostart.js');
+                    $PAGE->requires->js($jsurl);
+                    $PAGE->requires->js_init_call('M.quizaccess_autostart.init', array(), true);
+                }
             }
             
             // Agregar JavaScript para auto-enviar si está habilitado
