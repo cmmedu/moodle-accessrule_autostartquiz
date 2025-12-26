@@ -103,6 +103,19 @@ function xmldb_quizaccess_autostart_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2025112204, 'quizaccess', 'autostart');
     }
 
+    if ($oldversion < 2025112205) {
+        // Add disable_right_drawer field.
+        $table = new xmldb_table('quizaccess_autostart');
+        $field = new xmldb_field('disable_right_drawer', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0');
+        
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Disable right drawer savepoint reached.
+        upgrade_plugin_savepoint(true, 2025112205, 'quizaccess', 'autostart');
+    }
+
     return true;
 }
 

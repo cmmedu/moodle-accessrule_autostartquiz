@@ -3,3 +3,18 @@ body.quizaccess-autostart-hideinfo .que .info {
     display: none !important;
 }
 
+/* quizaccess_autostart - Hide right drawer and its toggle button */
+.quizaccess-autostart-hide-right-drawer .drawer.drawer-right,
+.quizaccess-autostart-hide-right-drawer .drawer-toggler.drawer-right-toggle {
+    display: none !important;
+}
+
+/* quizaccess_autostart - Ensure content takes full width when right drawer is disabled */
+body.quizaccess-autostart-hide-right-drawer #page,
+body.quizaccess-autostart-hide-right-drawer #page-wrapper,
+body.quizaccess-autostart-hide-right-drawer .drawercontent,
+body.quizaccess-autostart-hide-right-drawer #region-main {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-right: 0 !important;
+}

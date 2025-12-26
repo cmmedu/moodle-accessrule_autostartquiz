@@ -9,3 +9,5 @@ $string['hidequestionsinfotostudents'] = 'Hide questions info to students';
 $string['hidequestionsinfotostudents_help'] = 'If enabled, question info will be hidden from students using CSS.';
 $string['autosend'] = 'Automatically send when finishing attempt';
 $string['autosend_help'] = 'If enabled, when the student presses "Finish attempt", the "Send all and finish" form will be automatically submitted.';
+$string['disablerightdrawer'] = 'Disable right drawer';
+$string['disablerightdrawer_help'] = 'If enabled, the right drawer and its toggle button will be hidden.';

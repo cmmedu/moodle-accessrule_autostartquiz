@@ -21,6 +21,9 @@
         <FIELD NAME="autosend" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0">
           <COMMENT>Whether to automatically send and finish the attempt</COMMENT>
         </FIELD>
+        <FIELD NAME="disable_right_drawer" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0">
+          <COMMENT>Whether to disable the right drawer and its toggle button</COMMENT>
+        </FIELD>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false">
           <COMMENT>Creation timestamp</COMMENT>
         </FIELD>
