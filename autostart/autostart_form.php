@@ -31,6 +31,15 @@ class quizaccess_autostart_form {
      * Guardar el valor al crear/editar el quiz.
      */
     public static function save_settings(stdClass &$quiz, stdClass $data) {
-        $quiz->autostart_enabled = isset($data->autostart_enabled) ? 1 : 0;
+        // Normalizar los valores provenientes del formulario/restauración.
+        $quiz->autostart_enabled = !empty($data->autostart_enabled) ? 1 : 0;
+        $quiz->hide_questionsinfotostudents = !empty($data->hide_questionsinfotostudents) ? 1 : 0;
+        $quiz->autosend = !empty($data->autosend) ? 1 : 0;
+        $quiz->disable_right_drawer = !empty($data->disable_right_drawer) ? 1 : 0;
+
+        // Persistir en la tabla propia del plugin para que los checks se
+        // recuperen correctamente al reimportar/copiar cuestionarios.
+        require_once(__DIR__ . '/rule.php');
+        quizaccess_autostart::save_settings($quiz);
     }
 }
